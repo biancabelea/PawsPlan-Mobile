@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import db from './firebase';
 import Login from './components/Login';
+import Register from './components/Register';
 
 export default function App() {
   const [items, setItems] = useState([]);
@@ -23,11 +24,12 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      {items.map((item, index) => (
+      {/* {items.map((item, index) => (
         <Text key={index}>{JSON.stringify(item)}</Text>
       ))}
-      <StatusBar style="auto" />
-      <Login/>
+      <StatusBar style="auto" /> */}
+      {/* <Login/> */}
+      <Register/>
     </View>
   );
 }
