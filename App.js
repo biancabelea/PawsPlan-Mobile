@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
-import db from './firebase';
-import Login from './components/Login';
-import Register from './components/Register';
+import React, { useState, useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+import db from "./firebase";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import VetPartners from "./components/Vet_Partners";
 
 export default function App() {
   const [items, setItems] = useState([]);
@@ -29,7 +30,7 @@ export default function App() {
       ))}
       <StatusBar style="auto" /> */}
       {/* <Login/> */}
-      <Register/>
+      <VetPartners />
     </View>
   );
 }
@@ -37,8 +38,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
