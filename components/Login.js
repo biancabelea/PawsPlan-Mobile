@@ -9,6 +9,7 @@ import {
 import { auth } from "../firebase.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,15 +18,21 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log("User logged in: ", user.email);
+      await storeUserId(user.uid);
+      navigation.navigate('PetsList');
     } catch (error) {
       console.error("Error logging in:", error);
+    }
+  };
+
+  const storeUserId = async (userId) => {
+    try {
+        await AsyncStorage.setItem('userId', userId);
+    } catch (error) {
+        console.error('Failed to save user ID:', error);
     }
   };
 

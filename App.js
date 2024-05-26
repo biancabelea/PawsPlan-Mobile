@@ -19,30 +19,35 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
-          name="PetsList"
-          component={PetsList}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name="Login"
           component={Login}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
+      />
+      <Stack.Screen
           name="Register"
           component={Register}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
+      />
+      <Stack.Screen
+          name="PetsList"
+          component={PetsList}
+          options={{ headerShown: false }}
+      />
+      <Stack.Screen
           name="VetProfile"
           component={VetProfile}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
+      />
+      <Stack.Screen
           name="UserProfile"
           component={UserProfile}
           options={{ headerShown: false }}
-        />
+      />
+      <Stack.Screen
+          name="VetPartners"
+          component={VetPartners}
+          options={{ headerShown: false }}
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );

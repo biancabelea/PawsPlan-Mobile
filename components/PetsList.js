@@ -13,6 +13,7 @@ import { db } from "../firebase";
 import animal_list_logo from "../assets/animal_list_logo.png";
 import vets_partners_logo from "../assets/vets_partners_logo.png";
 import profile_logo from "../assets/profile_logo.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PetsList = ({ navigation }) => {
     const [pets, setPets] = useState([]);
@@ -21,7 +22,10 @@ const PetsList = ({ navigation }) => {
     useEffect(() => {
         const fetchPets = async () => {
           try {
-            const userId = 'zelygabG0xT6cG8WT5TkbABOt5Z2'; // Replace with the dynamic user ID when implemented
+            const userId = await AsyncStorage.getItem('userId');
+            if (!userId) {
+                throw new Error('No user ID found');
+            }
             const petsQuery = query(collection(db, "users", userId, "pets"));
             const petsSnapshot = await getDocs(petsQuery);
             const petsData = petsSnapshot.docs.map((doc) => {
