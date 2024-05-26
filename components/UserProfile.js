@@ -7,7 +7,6 @@ import {
   Image,
   TouchableOpacity,
   Alert,
-  Linking,
 } from "react-native";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Ensure you have configured Firebase
@@ -15,59 +14,37 @@ import * as Clipboard from "expo-clipboard";
 
 // Import images from the assets folder
 import emailIcon from "../assets/mail.png";
-import phoneIcon from "../assets/phone.png";
-import addressIcon from "../assets/address.png";
-import filledStar from "../assets/full_star.png";
-import emptyStar from "../assets/empty_star.png";
-import websiteIcon from "../assets/website.png";
+import ownerIcon from "../assets/profile_logo.png";
 
-const Vet_Profile = ({ route }) => {
-  const { vet } = route.params;
-  const [vetDetails, setVetDetails] = useState(null);
+const UserProfile = ({ route }) => {
+  const { user } = route.params;
+  const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVetDetails = async () => {
+    const fetchUserDetails = async () => {
       try {
-        console.log(`Fetching details for vet ID: ${vet.id}`);
-        const vetDoc = await getDoc(doc(db, "vets", vet.id));
-        if (vetDoc.exists()) {
-          console.log("Vet details fetched successfully:", vetDoc.data());
-          setVetDetails(vetDoc.data());
+        console.log(`Fetching details for user ID: ${user.id}`);
+        const userDoc = await getDoc(doc(db, "users", user.id));
+        if (userDoc.exists()) {
+          console.log("User details fetched successfully:", userDoc.data());
+          setUserDetails(userDoc.data());
         } else {
           console.log("No such document!");
         }
       } catch (error) {
-        console.error("Error fetching vet details:", error);
+        console.error("Error fetching user details:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchVetDetails();
-  }, [vet.id]);
+    fetchUserDetails();
+  }, [user.id]);
 
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
     Alert.alert("Copied to Clipboard", text);
-  };
-
-  const openWebsite = (url) => {
-    Linking.openURL(url);
-  };
-
-  const renderStars = (rating) => {
-    let stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <Image
-          key={i}
-          source={i < rating ? filledStar : emptyStar}
-          style={styles.star}
-        />
-      );
-    }
-    return stars;
   };
 
   if (loading) {
@@ -80,48 +57,27 @@ const Vet_Profile = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Vet Profile</Text>
-      {vetDetails ? (
+      <Text style={styles.header}>User Profile</Text>
+      {userDetails ? (
         <View style={styles.detailsContainer}>
           <TouchableOpacity
             style={styles.infoRow}
-            onPress={() => copyToClipboard(vetDetails.mail)}
+            onPress={() => copyToClipboard(userDetails.ownerName)}
+          >
+            <Image source={ownerIcon} style={styles.icon} />
+            <View style={styles.textContainer}>
+              <Text style={styles.detailText}>{userDetails.ownerName}</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.infoRow}
+            onPress={() => copyToClipboard(userDetails.email)}
           >
             <Image source={emailIcon} style={styles.icon} />
             <View style={styles.textContainer}>
-              <Text style={styles.detailText}>{vetDetails.mail}</Text>
+              <Text style={styles.detailText}>{userDetails.email}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.infoRow}
-            onPress={() => copyToClipboard(vetDetails.telefon)}
-          >
-            <Image source={phoneIcon} style={styles.icon} />
-            <View style={styles.textContainer}>
-              <Text style={styles.detailText}>{vetDetails.telefon}</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.infoRow}
-            onPress={() => copyToClipboard(vetDetails.adresa)}
-          >
-            <Image source={addressIcon} style={styles.icon} />
-            <View style={styles.textContainer}>
-              <Text style={styles.detailText}>{vetDetails.adresa}</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.infoRow}
-            onPress={() => openWebsite(vetDetails.website)}
-          >
-            <Image source={websiteIcon} style={styles.icon} />
-            <View style={styles.textContainer}>
-              <Text style={styles.detailText}>{vetDetails.website}</Text>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.starRating}>
-            {renderStars(vetDetails.recenzie)}
-          </View>
         </View>
       ) : (
         <Text style={styles.errorText}>No details available</Text>
@@ -192,19 +148,10 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 18,
   },
-  starRating: {
-    flexDirection: "row",
-    marginTop: 20,
-  },
-  star: {
-    width: 30,
-    height: 30,
-    marginRight: 5,
-  },
   errorText: {
     fontSize: 18,
     color: "red",
   },
 });
 
-export default Vet_Profile;
+export default UserProfile;
