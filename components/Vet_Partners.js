@@ -41,7 +41,7 @@ const VetPartners = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate("VetProfile", { vet: item })}
+      onPress={() => navigation.navigate("Vet_Profile", { vet: item })}
     >
       <View style={styles.listItem}>
         <Text style={styles.itemText}>{item.cabinet}</Text>
@@ -70,7 +70,7 @@ const VetPartners = ({ navigation }) => {
       </View>
       <View style={styles.footer}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Home")}
+          onPress={() => navigation.navigate("Animals")}
           style={styles.footerButton}
         >
           <Image source={animal_list_logo} style={styles.footerIcon} />
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
     textAlign: "left",
     alignSelf: "flex-start",
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   listItem: {
     backgroundColor: "#E0E0E0",
     padding: 15,
-    marginBottom: 10,
+    marginBottom: 20,
     borderRadius: 30,
     shadowColor: "#000",
     shadowOffset: {
