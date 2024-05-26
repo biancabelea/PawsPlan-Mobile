@@ -82,7 +82,7 @@ const VetPartners = ({ navigation }) => {
           <Image source={vets_partners_logo} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Profile")}
+          onPress={() => navigation.navigate("Vet_Profile", { vet: null })}
           style={styles.footerButton}
         >
           <Image source={profile_logo} style={styles.footerIcon} />
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "left",
     alignSelf: "flex-start",
