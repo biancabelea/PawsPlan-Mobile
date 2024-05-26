@@ -9,6 +9,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Vet_Partners from "./components/Vet_Partners";
 import Vet_Profile from "./components/Vet_Profile";
+import User_Profile from "./components/User_Profile";
 
 // export default function App() {
 //   const [items, setItems] = useState([]);
@@ -52,15 +53,25 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Vet_Partners">
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
-          name="Vet_Partners"
-          component={Vet_Partners}
+          name="Login"
+          component={Login}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={Register}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Vet_Profile"
           component={Vet_Profile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="User_Profile"
+          component={User_Profile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
