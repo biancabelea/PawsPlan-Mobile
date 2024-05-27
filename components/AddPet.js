@@ -15,18 +15,14 @@ const AddPet = ({ navigation }) => {
       if (!userId) {
         throw new Error("No user ID found");
       }
-      console.log("UserID:", userId); // Debugging log
       const docRef = await addDoc(collection(db, "users", userId, "pets"), {
         petName,
         age,
         breed,
       });
-      console.log("Document written with ID: ", docRef.id); // Debugging log
-      Alert.alert("Success", "Pet added successfully");
       navigation.navigate("PetsList");
     } catch (error) {
       console.error("Error adding pet: ", error);
-      Alert.alert("Error", "Failed to add pet");
     }
   };
 
