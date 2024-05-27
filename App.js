@@ -7,46 +7,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 import db from "./firebase";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Vet_Partners from "./components/Vet_Partners";
-import Vet_Profile from "./components/Vet_Profile";
-import User_Profile from "./components/User_Profile";
-
-// export default function App() {
-//   const [items, setItems] = useState([]);
-
-//   // useEffect(() => {
-//   //   const fetchData = async () => {
-//   //     const querySnapshot = await getDocs(collection(db, 'users'));
-//   //     const fetchedItems = [];
-//   //     querySnapshot.forEach((doc) => {
-//   //       fetchedItems.push(doc.data());
-//   //     });
-//   //     setItems(fetchedItems);
-//   //   };
-
-//   //   fetchData();
-//   // }, []);
-
-//   return (
-//     <View style={styles.container}>
-//       {/* {items.map((item, index) => (
-//         <Text key={index}>{JSON.stringify(item)}</Text>
-//       ))}
-//       <StatusBar style="auto" /> */}
-//       {/* <Login/> */}
-//       <VetPartners />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });
+import VetPartners from "./components/VetPartners";
+import VetProfile from "./components/VetProfile";
+import UserProfile from "./components/UserProfile";
+import PetsList from "./components/PetsList";
 
 const Stack = createStackNavigator();
 
@@ -54,26 +18,36 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
+      <Stack.Screen
           name="Login"
           component={Login}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
+      />
+      <Stack.Screen
           name="Register"
           component={Register}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Vet_Profile"
-          component={Vet_Profile}
+      />
+      <Stack.Screen
+          name="PetsList"
+          component={PetsList}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="User_Profile"
-          component={User_Profile}
+      />
+      <Stack.Screen
+          name="VetProfile"
+          component={VetProfile}
           options={{ headerShown: false }}
-        />
+      />
+      <Stack.Screen
+          name="UserProfile"
+          component={UserProfile}
+          options={{ headerShown: false }}
+      />
+      <Stack.Screen
+          name="VetPartners"
+          component={VetPartners}
+          options={{ headerShown: false }}
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );

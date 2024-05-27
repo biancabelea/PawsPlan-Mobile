@@ -41,7 +41,7 @@ const VetPartners = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate("Vet_Profile", { vet: item })}
+      onPress={() => navigation.navigate("VetProfile", { vet: item })}
     >
       <View style={styles.listItem}>
         <Text style={styles.itemText}>{item.cabinet}</Text>
@@ -82,7 +82,7 @@ const VetPartners = ({ navigation }) => {
           <Image source={vets_partners_logo} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Vet_Profile", { vet: null })}
+          onPress={() => navigation.navigate("VetProfile", { vet: null })}
           style={styles.footerButton}
         >
           <Image source={profile_logo} style={styles.footerIcon} />
