@@ -14,6 +14,7 @@ import animal_list_logo from "../assets/animal_list_logo.png";
 import vets_partners_logo from "../assets/vets_partners_logo.png";
 import profile_logo from "../assets/profile_logo.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+//import { useFocusEffect } from "@react-navigation/native";
 
 const PetsList = ({ navigation }) => {
   const [pets, setPets] = useState([]);
@@ -48,6 +49,12 @@ const PetsList = ({ navigation }) => {
     fetchPets();
   }, []);
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchPets();
+  //   }, [])
+  // );
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => navigation.navigate("PetProfile", { pet: item })}
@@ -70,7 +77,15 @@ const PetsList = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Pets</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>My Pets</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("AddPet")}
+        >
+          <Text style={styles.addButtonText}>Add Pet</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.listWrapper}>
         <FlatList
           data={pets}
@@ -111,15 +126,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#43B4F4",
     padding: 20,
   },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    padding: 20,
+  },
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    textAlign: "left",
-    alignSelf: "flex-start",
     color: "#FFFFFF",
-    marginLeft: 20,
-    marginTop: 20,
-    marginBottom: 10,
+  },
+  addButton: {
+    backgroundColor: "#841584",
+    padding: 10,
+    borderRadius: 20,
+  },
+  addButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
   listWrapper: {
     width: 350,
