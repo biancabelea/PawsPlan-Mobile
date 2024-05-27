@@ -70,19 +70,19 @@ const VetPartners = ({ navigation }) => {
       </View>
       <View style={styles.footer}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Animals")}
+          onPress={() => navigation.navigate("PetsList")}
           style={styles.footerButton}
         >
           <Image source={animal_list_logo} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Partners")}
+          onPress={() => navigation.navigate("VetPartners")}
           style={styles.footerButton}
         >
           <Image source={vets_partners_logo} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("VetProfile", { vet: null })}
+          onPress={() => navigation.navigate("UserProfile")}
           style={styles.footerButton}
         >
           <Image source={profile_logo} style={styles.footerIcon} />
@@ -105,12 +105,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "left",
     alignSelf: "flex-start",
+    color: "#FFFFFF",
     marginLeft: 20,
     marginTop: 20,
     marginBottom: 10,
   },
   listWrapper: {
-    width: 350, // Slightly smaller width for the list wrapper
+    width: 350,
     height: "70%",
     backgroundColor: "#FFFFFF",
     borderRadius: 30,
@@ -157,11 +158,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   footerButton: {
-    marginHorizontal: 20, // Adds space between the buttons
+    marginHorizontal: 20,
   },
   footerIcon: {
-    width: 50, // Adjust width to fit your image size
-    height: 50, // Adjust height to fit your image size
+    width: 50,
+    height: 50,
   },
   input: {
     width: 380,
