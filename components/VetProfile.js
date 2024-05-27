@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 30,
     fontWeight: "bold",
+    color: "#FFFFFF",
     textAlign: "left",
     alignSelf: "flex-start",
     marginLeft: 20,

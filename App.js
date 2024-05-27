@@ -11,6 +11,7 @@ import VetPartners from "./components/VetPartners";
 import VetProfile from "./components/VetProfile";
 import UserProfile from "./components/UserProfile";
 import PetsList from "./components/PetsList";
+import ChangePassword from "./components/ChangePassword";
 
 const Stack = createStackNavigator();
 
@@ -18,36 +19,42 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen
+        <Stack.Screen
           name="Login"
           component={Login}
           options={{ headerShown: false }}
-      />
-      <Stack.Screen
+        />
+        <Stack.Screen
           name="Register"
           component={Register}
           options={{ headerShown: false }}
-      />
-      <Stack.Screen
+        />
+        <Stack.Screen
           name="PetsList"
           component={PetsList}
           options={{ headerShown: false }}
-      />
-      <Stack.Screen
+        />
+        <Stack.Screen
           name="VetProfile"
           component={VetProfile}
           options={{ headerShown: false }}
-      />
-      <Stack.Screen
+        />
+        <Stack.Screen
           name="UserProfile"
           component={UserProfile}
           options={{ headerShown: false }}
-      />
-      <Stack.Screen
+        />
+        <Stack.Screen
           name="VetPartners"
           component={VetPartners}
           options={{ headerShown: false }}
-      />
+        />
+
+        <Stack.Screen
+          name="ChangePassword"
+          component={ChangePassword}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

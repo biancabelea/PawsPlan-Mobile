@@ -3,88 +3,120 @@ import {
   StyleSheet,
   Text,
   View,
-  ActivityIndicator,
-  Image,
   TouchableOpacity,
+  Image,
+  ActivityIndicator,
   Alert,
 } from "react-native";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase"; // Ensure you have configured Firebase
+import { auth, db } from "../firebase.js";
+import { signOut } from "firebase/auth";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Clipboard from "expo-clipboard";
-
-// Import images from the assets folder
 import emailIcon from "../assets/mail.png";
-import ownerIcon from "../assets/profile_logo.png";
+import phoneIcon from "../assets/phone.png";
+import pawIcon from "../assets/paw.png"; // Ensure this image exists in the assets folder
 
-const UserProfile = ({ route }) => {
-  const { user } = route.params;
-  const [userDetails, setUserDetails] = useState(null);
+export default function Profile() {
+  const [user, setUser] = useState(null);
+  const [petsCount, setPetsCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
+    const fetchUserData = async () => {
       try {
-        console.log(`Fetching details for user ID: ${user.id}`);
-        const userDoc = await getDoc(doc(db, "users", user.id));
-        if (userDoc.exists()) {
-          console.log("User details fetched successfully:", userDoc.data());
-          setUserDetails(userDoc.data());
+        const userId = await AsyncStorage.getItem("userId");
+        if (userId) {
+          const userDoc = await getDoc(doc(db, "users", userId));
+          if (userDoc.exists()) {
+            setUser(userDoc.data());
+
+            // Fetch the nested pets collection and count the number of pets
+            const petsCollectionRef = collection(db, "users", userId, "pets");
+            const petsSnapshot = await getDocs(petsCollectionRef);
+            setPetsCount(petsSnapshot.size);
+          } else {
+            console.log("No such document!");
+          }
         } else {
-          console.log("No such document!");
+          console.log("No userId found in AsyncStorage");
         }
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        console.error("Error fetching user data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserDetails();
-  }, [user.id]);
+    fetchUserData();
+  }, []);
 
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
     Alert.alert("Copied to Clipboard", text);
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      await AsyncStorage.removeItem("userId");
+      navigation.navigate("Login", { clearCredentials: true });
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>User Profile</Text>
-      {userDetails ? (
+      <Text style={styles.header}>My Profile</Text>
+      {user ? (
         <View style={styles.detailsContainer}>
           <TouchableOpacity
             style={styles.infoRow}
-            onPress={() => copyToClipboard(userDetails.ownerName)}
+            onPress={() => copyToClipboard(user.ownerName)}
           >
-            <Image source={ownerIcon} style={styles.icon} />
+            <Image source={phoneIcon} style={styles.icon} />
             <View style={styles.textContainer}>
-              <Text style={styles.detailText}>{userDetails.ownerName}</Text>
+              <Text style={styles.detailText}>{user.ownerName}</Text>
             </View>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.infoRow}
-            onPress={() => copyToClipboard(userDetails.email)}
+            onPress={() => copyToClipboard(user.email)}
           >
             <Image source={emailIcon} style={styles.icon} />
             <View style={styles.textContainer}>
-              <Text style={styles.detailText}>{userDetails.email}</Text>
+              <Text style={styles.detailText}>{user.email}</Text>
             </View>
           </TouchableOpacity>
+
+          <View style={styles.infoRow}>
+            <Image source={pawIcon} style={styles.icon} />
+            <View style={styles.textContainer}>
+              <Text style={styles.detailText}>Pets: {petsCount}</Text>
+            </View>
+          </View>
         </View>
       ) : (
         <Text style={styles.errorText}>No details available</Text>
       )}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("ChangePassword")}
+        >
+          <Text style={styles.buttonText}>Change Password</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleLogout}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -100,8 +132,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   header: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "bold",
+    color: "#FFFFFF",
     textAlign: "left",
     alignSelf: "flex-start",
     marginLeft: 20,
@@ -113,7 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     padding: 5,
     borderRadius: 30,
-    height: "70%",
+    height: "50%",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -148,10 +181,26 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 18,
   },
+  buttonsContainer: {
+    marginTop: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  button: {
+    width: 250,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 30,
+    paddingVertical: 15,
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#000000",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
   errorText: {
     fontSize: 18,
     color: "red",
   },
 });
-
-export default UserProfile;

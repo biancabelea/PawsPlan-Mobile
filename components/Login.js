@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,21 +8,33 @@ import {
 } from "react-native";
 import { auth } from "../firebase.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
+  const route = useRoute();
+
+  useEffect(() => {
+    if (route.params?.clearCredentials) {
+      setEmail("");
+      setPassword("");
+    }
+  }, [route.params]);
 
   const handleLogin = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
       console.log("User logged in: ", user.email);
       await storeUserId(user.uid);
-      navigation.navigate('PetsList');
+      navigation.navigate("PetsList");
     } catch (error) {
       console.error("Error logging in:", error);
     }
@@ -30,9 +42,9 @@ export default function Login() {
 
   const storeUserId = async (userId) => {
     try {
-        await AsyncStorage.setItem('userId', userId);
+      await AsyncStorage.setItem("userId", userId);
     } catch (error) {
-        console.error('Failed to save user ID:', error);
+      console.error("Failed to save user ID:", error);
     }
   };
 
@@ -82,7 +94,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    marginTop: -50, // Add negative margin to move the header higher
+    marginTop: -50,
     color: "#FFFFFF",
   },
   input: {
