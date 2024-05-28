@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -14,46 +14,42 @@ import animal_list_logo from "../assets/animal_list_logo.png";
 import vets_partners_logo from "../assets/vets_partners_logo.png";
 import profile_logo from "../assets/profile_logo.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-//import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const PetsList = ({ navigation }) => {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchPets = async () => {
-      try {
-        const userId = await AsyncStorage.getItem("userId");
-        if (!userId) {
-          throw new Error("No user ID found");
-        }
-        const petsQuery = query(collection(db, "users", userId, "pets"));
-        const petsSnapshot = await getDocs(petsQuery);
-        const petsData = petsSnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            petId: doc.id,
-            petName: data.petName,
-            age: data.age,
-            breed: data.breed,
-          };
-        });
-        setPets(petsData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching pets: ", error);
-        setLoading(false);
+  const fetchPets = async () => {
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+      if (!userId) {
+        throw new Error("No user ID found");
       }
-    };
+      const petsQuery = query(collection(db, "users", userId, "pets"));
+      const petsSnapshot = await getDocs(petsQuery);
+      const petsData = petsSnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          petId: doc.id,
+          petName: data.petName,
+          age: data.age,
+          breed: data.breed,
+        };
+      });
+      setPets(petsData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching pets: ", error);
+      setLoading(false);
+    }
+  };
 
-    fetchPets();
-  }, []);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchPets();
-  //   }, [])
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      fetchPets();
+    }, [])
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
