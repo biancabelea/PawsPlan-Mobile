@@ -3,26 +3,23 @@ import {
   StyleSheet,
   Text,
   View,
+  FlatList,
   TouchableOpacity,
-  Image,
   ActivityIndicator,
+  Image,
   Alert,
 } from "react-native";
-import { db } from "../firebase.js";
-import { doc, getDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Clipboard from "expo-clipboard";
+import { collection, getDocs, query, deleteDoc, doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import animal_list_logo from "../assets/animal_list_logo.png";
 import vets_partners_logo from "../assets/vets_partners_logo.png";
 import profile_logo from "../assets/profile_logo.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function PetProfile() {
+const PetProfile = ({ navigation, route }) => {
   const [pet, setPet] = useState(null);
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
-  const route = useRoute();
   const { petId } = route.params;
 
   useEffect(() => {
@@ -35,7 +32,14 @@ export default function PetProfile() {
             setPet(petDoc.data());
 
             // Fetch the nested medications collection
-            const medicationsCollectionRef = collection(db, "users", userId, "pets", petId, "medication");
+            const medicationsCollectionRef = collection(
+              db,
+              "users",
+              userId,
+              "pets",
+              petId,
+              "medication"
+            );
             const medicationsSnapshot = await getDocs(medicationsCollectionRef);
             const medicationsData = medicationsSnapshot.docs.map((doc) => {
               return {
@@ -59,6 +63,18 @@ export default function PetProfile() {
 
     fetchPetData();
   }, [petId]);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.listItem}>
+      <Text style={styles.itemText}>Medication: {item.medName}</Text>
+      <Text style={styles.itemText}>Dosage: {item.dosage}</Text>
+      <Text style={styles.itemText}>Date: {item.timestamp}</Text>
+    </View>
+  );
+
+  const handleAddMedication = () => {
+    navigation.navigate("AddMedication", { petId });
+  };
 
   const confirmDeleteMedication = (medicationId) => {
     Alert.alert(
@@ -95,11 +111,6 @@ export default function PetProfile() {
     }
   };
 
-  const copyToClipboard = async (text) => {
-    await Clipboard.setStringAsync(text);
-    Alert.alert("Copied to Clipboard", text);
-  };
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -110,39 +121,34 @@ export default function PetProfile() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.container}>
-        <Text style={styles.header}>{pet ? pet.petName : "Pet Profile"}</Text>
+      <View style={styles.headerContainer}>
+      <Text style={styles.header}>{pet ? pet.petName : "Pet Profile"}</Text>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate("AddMedication")}
+          onPress={handleAddMedication}
         >
           <Text style={styles.addButtonText}>Add Medication</Text>
         </TouchableOpacity>
-        {pet ? (
-          <View style={styles.detailsContainer}>
-            <Text style={styles.sectionHeader}>Medications</Text>
-            {medications.length > 0 ? (
-              medications.map((medication) => (
-                <TouchableOpacity
-                  key={medication.id}
-                  style={styles.infoRow}
-                  onLongPress={() => confirmDeleteMedication(medication.id)}
-                >
-                  <View style={styles.textContainer}>
-                    <Text style={styles.detailText}>Medication: {medication.medName}</Text>
-                    <Text style={styles.detailText}>Dosage: {medication.dosage}</Text>
-                    <Text style={styles.detailText}>Date: {medication.timestamp}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <Text style={styles.noDataText}>No medications found.</Text>
-            )}
-          </View>
-        ) : (
-          <Text style={styles.errorText}>No details available</Text>
-        )}
       </View>
+      {pet ? (
+        <View style={styles.detailsContainer}>
+          <Text style={styles.sectionHeader}>Medications</Text>
+          <FlatList
+            data={medications}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => confirmDeleteMedication(item.id)}
+              >
+                {renderItem({ item })}
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+          />
+        </View>
+      ) : (
+        <Text style={styles.errorText}>No pet details available</Text>
+      )}
       <View style={styles.footer}>
         <TouchableOpacity
           onPress={() => navigation.navigate("PetsList")}
@@ -165,8 +171,7 @@ export default function PetProfile() {
       </View>
     </View>
   );
-}
-
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -174,11 +179,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#43B4F4",
     padding: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   header: {
     fontSize: 24,
@@ -189,6 +189,22 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 20,
     marginBottom: 10,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    padding: 20,
+  },
+  addButton: {
+    backgroundColor: "#841584",
+    padding: 10,
+    borderRadius: 20,
+  },
+  addButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
   detailsContainer: {
     width: 350,
@@ -206,28 +222,24 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignItems: "center",
   },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-    borderRadius: 30,
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    width: "100%",
+  listContainer: {
+    flexGrow: 1,
   },
-  icon: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
-  },
-  textContainer: {
+  listItem: {
     backgroundColor: "#E0E0E0",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    padding: 15,
+    marginBottom: 20,
     borderRadius: 30,
-    flex: 1,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  detailText: {
+  itemText: {
     fontSize: 18,
   },
   sectionHeader: {
@@ -235,10 +247,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
     marginVertical: 10,
-  },
-  noDataText: {
-    fontSize: 16,
-    color: "gray",
   },
   errorText: {
     fontSize: 18,
@@ -262,4 +270,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
+
+export default PetProfile;
