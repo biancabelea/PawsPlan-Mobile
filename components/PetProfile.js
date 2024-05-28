@@ -71,13 +71,24 @@ const PetProfile = ({ navigation, route }) => {
     navigation.navigate("AddMedication", { petId: petId });
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.listItem}>
-      <Text style={styles.itemText}>Medication: {item.medName}</Text>
-      <Text style={styles.itemText}>Dosage: {item.dosage}</Text>
-      <Text style={styles.itemText}>Date: {item.timestamp}</Text>
-    </View>
-  );
+  const renderItem = ({ item }) => {
+    const formattedDate = item.timestamp && item.timestamp.toDate().toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    });
+    
+    return (
+      <View style={styles.listItem}>
+        <Text style={styles.itemText}>Medication: {item.medName}</Text>
+        <Text style={styles.itemText}>Dosage: {item.dosage}</Text>
+        <Text style={styles.itemText}>Date: {formattedDate}</Text>
+      </View>
+    );
+  };
 
   const confirmDeleteMedication = (medicationId) => {
     Alert.alert(

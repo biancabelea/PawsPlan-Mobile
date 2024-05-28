@@ -42,6 +42,7 @@ const AddPet = ({ navigation }) => {
         placeholder="Age"
         value={age}
         onChangeText={setAge}
+        keyboardType="numeric"
       />
       <Text style={styles.label}>Breed</Text>
       <TextInput

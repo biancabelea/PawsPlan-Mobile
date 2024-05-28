@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const AddMedication = ({ navigation, route }) => {
   const { petId } = route.params;
   const [medName, setMedName] = useState("");
   const [dosage, setDosage] = useState("");
-  const [timestamp, setTimestamp] = useState("");
+  const [timestamp, setTimestamp] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleAddMedication = async () => {
     try {
@@ -26,7 +28,12 @@ const AddMedication = ({ navigation, route }) => {
       console.error("Error adding medication: ", error);
     }
   };
-  
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || timestamp;
+    setShowDatePicker(Platform.OS === 'ios');
+    setTimestamp(currentDate);
+  };
 
   return (
     <View style={styles.container}>
@@ -44,14 +51,20 @@ const AddMedication = ({ navigation, route }) => {
         placeholder="Dosage"
         value={dosage}
         onChangeText={setDosage}
+        keyboardType="numeric"
       />
       <Text style={styles.label}>Timestamp</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Timestamp"
-        value={timestamp}
-        onChangeText={setTimestamp}
-      />
+      <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.datePickerText}>{timestamp.toLocaleDateString()}</Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={timestamp}
+          mode="datetime"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
       <TouchableOpacity style={styles.button} onPress={handleAddMedication}>
         <Text style={styles.buttonText}>Add Medication</Text>
       </TouchableOpacity>
@@ -105,6 +118,17 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: 20,
     marginBottom: 5,
+  },
+  datePickerButton: {
+    backgroundColor: "#FFFFFF",
+    padding: 10,
+    borderRadius: 30,
+    marginBottom: 20,
+    width: 300,
+    alignItems: "center",
+  },
+  datePickerText: {
+    fontSize: 18,
   },
 });
 
