@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   ActivityIndicator,
@@ -10,16 +9,15 @@ import {
   Linking,
 } from "react-native";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase"; // Ensure you have configured Firebase
+import { db } from "../firebase";
 import * as Clipboard from "expo-clipboard";
-
-// Import images from the assets folder
 import emailIcon from "../assets/mail.png";
 import phoneIcon from "../assets/phone.png";
 import addressIcon from "../assets/address.png";
 import filledStar from "../assets/full_star.png";
 import emptyStar from "../assets/empty_star.png";
 import websiteIcon from "../assets/website.png";
+import { styles } from '../styles/VetProfileStyles.js'
 
 const VetProfile = ({ route }) => {
   const { vet } = route.params;
@@ -129,83 +127,5 @@ const VetProfile = ({ route }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#43B4F4",
-    padding: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    textAlign: "left",
-    alignSelf: "flex-start",
-    marginLeft: 20,
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  detailsContainer: {
-    width: 350,
-    backgroundColor: "#FFFFFF",
-    padding: 5,
-    borderRadius: 30,
-    height: "70%",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    alignItems: "center",
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-    borderRadius: 30,
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    width: "100%",
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
-  },
-  textContainer: {
-    backgroundColor: "#E0E0E0",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 30,
-    flex: 1,
-  },
-  detailText: {
-    fontSize: 18,
-  },
-  starRating: {
-    flexDirection: "row",
-    marginTop: 20,
-  },
-  star: {
-    width: 30,
-    height: 30,
-    marginRight: 5,
-  },
-  errorText: {
-    fontSize: 18,
-    color: "red",
-  },
-});
 
 export default VetProfile;
