@@ -107,7 +107,15 @@ const PetsList = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Pets</Text>
+       <View style={styles.headerContainer}>
+        <Text style={styles.header}>My Pets</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("AddPet")}
+        >
+          <Text style={styles.addButtonText}>Add Pet</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.listWrapper}>
         <FlatList
           data={pets}
@@ -157,6 +165,22 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 20,
     marginBottom: 10,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    padding: 20,
+  },
+  addButton: {
+    backgroundColor: "#841584",
+    padding: 10,
+    borderRadius: 20,
+  },
+  addButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
   listWrapper: {
     width: 350,
