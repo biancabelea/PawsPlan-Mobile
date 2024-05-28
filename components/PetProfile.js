@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import {
   StyleSheet,
   Text,
@@ -22,47 +23,53 @@ const PetProfile = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const { petId } = route.params;
 
-  useEffect(() => {
-    const fetchPetData = async () => {
-      try {
-        const userId = await AsyncStorage.getItem("userId");
-        if (userId) {
-          const petDoc = await getDoc(doc(db, "users", userId, "pets", petId));
-          if (petDoc.exists()) {
-            setPet(petDoc.data());
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchPetData = async () => {
+        try {
+          const userId = await AsyncStorage.getItem("userId");
+          if (userId) {
+            const petDoc = await getDoc(doc(db, "users", userId, "pets", petId));
+            if (petDoc.exists()) {
+              setPet(petDoc.data());
 
-            // Fetch the nested medications collection
-            const medicationsCollectionRef = collection(
-              db,
-              "users",
-              userId,
-              "pets",
-              petId,
-              "medication"
-            );
-            const medicationsSnapshot = await getDocs(medicationsCollectionRef);
-            const medicationsData = medicationsSnapshot.docs.map((doc) => {
-              return {
-                id: doc.id,
-                ...doc.data(),
-              };
-            });
-            setMedications(medicationsData);
+              // Fetch the nested medications collection
+              const medicationsCollectionRef = collection(
+                db,
+                "users",
+                userId,
+                "pets",
+                petId,
+                "medication"
+              );
+              const medicationsSnapshot = await getDocs(medicationsCollectionRef);
+              const medicationsData = medicationsSnapshot.docs.map((doc) => {
+                return {
+                  id: doc.id,
+                  ...doc.data(),
+                };
+              });
+              setMedications(medicationsData);
+            } else {
+              console.log("No such document!");
+            }
           } else {
-            console.log("No such document!");
+            console.log("No userId found in AsyncStorage");
           }
-        } else {
-          console.log("No userId found in AsyncStorage");
+        } catch (error) {
+          console.error("Error fetching pet data:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching pet data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchPetData();
-  }, [petId]);
+      fetchPetData();
+    }, [petId])
+  );
+
+  const handleAddMedication = () => {
+    navigation.navigate("AddMedication", { petId: petId });
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.listItem}>
@@ -71,10 +78,6 @@ const PetProfile = ({ navigation, route }) => {
       <Text style={styles.itemText}>Date: {item.timestamp}</Text>
     </View>
   );
-
-  const handleAddMedication = () => {
-    navigation.navigate("AddMedication", { petId });
-  };
 
   const confirmDeleteMedication = (medicationId) => {
     Alert.alert(

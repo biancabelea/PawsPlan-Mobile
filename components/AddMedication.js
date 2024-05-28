@@ -4,7 +4,8 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const AddMedication = ({ petId, navigation }) => {
+const AddMedication = ({ navigation, route }) => {
+  const { petId } = route.params;
   const [medName, setMedName] = useState("");
   const [dosage, setDosage] = useState("");
   const [timestamp, setTimestamp] = useState("");
@@ -25,6 +26,7 @@ const AddMedication = ({ petId, navigation }) => {
       console.error("Error adding medication: ", error);
     }
   };
+  
 
   return (
     <View style={styles.container}>
