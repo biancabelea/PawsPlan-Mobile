@@ -14,6 +14,7 @@ import PetsList from "./components/PetsList";
 import ChangePassword from "./components/ChangePassword";
 import AddPet from "./components/AddPet";
 import PetProfile from "./components/PetProfile";
+import AddMedication from "./components/AddMedication";
 
 const Stack = createStackNavigator();
 
@@ -64,6 +65,11 @@ const App = () => {
         <Stack.Screen
           name="PetProfile"
           component={PetProfile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddMedication"
+          component={AddMedication}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

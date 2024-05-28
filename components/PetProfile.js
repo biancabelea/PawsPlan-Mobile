@@ -112,6 +112,12 @@ export default function PetProfile() {
     <View style={styles.container}>
       <View style={styles.container}>
         <Text style={styles.header}>{pet ? pet.petName : "Pet Profile"}</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("AddMedication")}
+        >
+          <Text style={styles.addButtonText}>Add Medication</Text>
+        </TouchableOpacity>
         {pet ? (
           <View style={styles.detailsContainer}>
             <Text style={styles.sectionHeader}>Medications</Text>
