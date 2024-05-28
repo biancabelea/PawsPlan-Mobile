@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -14,46 +14,43 @@ import animal_list_logo from "../assets/animal_list_logo.png";
 import vets_partners_logo from "../assets/vets_partners_logo.png";
 import profile_logo from "../assets/profile_logo.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
 
 const PetsList = ({ navigation }) => {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchPets = async () => {
-    try {
-      const userId = await AsyncStorage.getItem("userId");
-      if (!userId) {
-        throw new Error("No user ID found");
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const userId = await AsyncStorage.getItem("userId");
+        if (!userId) {
+          throw new Error("No user ID found");
+        }
+        const petsQuery = query(collection(db, "users", userId, "pets"));
+        const petsSnapshot = await getDocs(petsQuery);
+        const petsData = petsSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            petId: doc.id,
+            petName: data.petName,
+            age: data.age,
+            breed: data.breed,
+          };
+        });
+        setPets(petsData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching pets: ", error);
+        setLoading(false);
       }
-      const petsQuery = query(collection(db, "users", userId, "pets"));
-      const petsSnapshot = await getDocs(petsQuery);
-      const petsData = petsSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          petId: doc.id,
-          petName: data.petName,
-          age: data.age,
-          breed: data.breed,
-        };
-      });
-      setPets(petsData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching pets: ", error);
-      setLoading(false);
-    }
-  };
+    };
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchPets();
-    }, [])
-  );
+    fetchPets();
+  }, []);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate("PetProfile", { pet: item })}
+      onPress={() => navigation.navigate("PetProfile", { petId: item.petId })}
     >
       <View style={styles.listItem}>
         <Text style={styles.itemText}>{item.petName}</Text>
@@ -73,15 +70,7 @@ const PetsList = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>My Pets</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate("AddPet")}
-        >
-          <Text style={styles.addButtonText}>Add Pet</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.header}>My Pets</Text>
       <View style={styles.listWrapper}>
         <FlatList
           data={pets}
@@ -122,26 +111,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#43B4F4",
     padding: 20,
   },
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    padding: 20,
-  },
   header: {
     fontSize: 24,
     fontWeight: "bold",
+    textAlign: "left",
+    alignSelf: "flex-start",
     color: "#FFFFFF",
-  },
-  addButton: {
-    backgroundColor: "#841584",
-    padding: 10,
-    borderRadius: 20,
-  },
-  addButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
+    marginLeft: 20,
+    marginTop: 20,
+    marginBottom: 10,
   },
   listWrapper: {
     width: 350,
