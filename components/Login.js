@@ -32,7 +32,6 @@ export default function Login() {
         password
       );
       const user = userCredential.user;
-      console.log("User logged in: ", user.email);
       await storeUserId(user.uid);
       navigation.navigate("PetsList");
     } catch (error) {

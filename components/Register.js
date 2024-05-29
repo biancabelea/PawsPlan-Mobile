@@ -39,7 +39,6 @@ const Register = () => {
       setName("");
       setEmail("");
       setPassword("");
-      console.log("Registered as:", email);
     } catch (error) {
       console.error("Error registering user:", error);
     }
@@ -83,11 +82,6 @@ const Register = () => {
       >
         <Text style={styles.buttonText}>Go to Login</Text>
       </TouchableOpacity>
-      {registeredEmail && (
-        <Text style={styles.registeredText}>
-          Registered as: {registeredEmail}
-        </Text>
-      )}
     </View>
   );
 };

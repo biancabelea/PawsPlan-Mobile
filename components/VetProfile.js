@@ -27,10 +27,8 @@ const VetProfile = ({ route }) => {
   useEffect(() => {
     const fetchVetDetails = async () => {
       try {
-        console.log(`Fetching details for vet ID: ${vet.id}`);
         const vetDoc = await getDoc(doc(db, "vets", vet.id));
         if (vetDoc.exists()) {
-          console.log("Vet details fetched successfully:", vetDoc.data());
           setVetDetails(vetDoc.data());
         } else {
           console.log("No such document!");
